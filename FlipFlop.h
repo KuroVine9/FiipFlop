@@ -12,21 +12,9 @@ private:
 	bool Q, Q_;
 
 	void Compute() {
-		if ((Q == true && Q_ == false && ((S | R) == false)) || S == true) {
-			Q_ = !(S | Q);
-			Q = !(R | Q_);
-		}
-		else if ((Q == false && Q_ == true && ((S | R) == false)) || R == true) {
-			Q = !(R | Q_);
-			Q_ = !(S | Q);
-		}
-		else {
-			cout << "Err" << endl;
-		}
-
-		if (Q == Q_) {
-			cout << "Err" << endl;
-		}
+		Q = !(R | Q_);
+		Q_ = !(S | Q);
+		Q = !(R | Q_);
 	}
 public:
 	Latch() {
