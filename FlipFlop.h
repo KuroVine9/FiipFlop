@@ -52,23 +52,27 @@ class JKFF : public Latch {
 private:
 	bool J, K;
 	bool CP;
+	bool CPCHK;
 public:
 	JKFF() {
 		J = false;
 		K = false;
 		CP = false;
+		CPCHK = CP;
+	}
+	void ClockFall() {
+		CP = false;
+		CPCHK = CP;
 	}
 	void JKInput(bool j, bool k, bool cp) {
 		J = j;
 		K = k;
 		CP = cp;
-		LchInput((CP & J & LchOutput(true)), (CP & K & LchOutput(false)));
+		LchInput(((CPCHK == false && CP == true ? true : false) & J & LchOutput(true)), ((CPCHK == false && CP == true ? true : false) & K & LchOutput(false)));
+		CPCHK = cp;
 	}
 	bool JKIO(bool j, bool k, bool cp, bool Mode = false) {
-		J = j;
-		K = k;
-		CP = cp;
-		LchInput((CP & J & LchOutput(true)), (CP & K & LchOutput(false)));
+		JKInput(j, k, cp);
 		return (LchOutput(Mode));
 	}
 	void PrintStat() {
@@ -76,6 +80,7 @@ public:
 		cout << "J: " << J << endl;
 		cout << "K: " << K << endl;
 		cout << "CP: " << CP << endl;
+		cout << "CPCHK: " << CPCHK << endl;
 		cout << "Q: " << LchOutput(false) << endl;
 		cout << "Q_: " << LchOutput(true) << endl;
 		cout << "============" << endl;
@@ -86,25 +91,33 @@ class TFF : public Latch {
 private:
 	bool T;
 	bool CP;
-public:
+	bool CPCHK;
+public:	
+	
 	TFF() {
 		T = false;
+		CP = false;
+		CPCHK = CP;
+	}
+	void ClockFall() {
+		CP = false;
+		CPCHK = CP;
 	}
 	void TInput(bool t, bool cp) {
 		T = t;
 		CP = cp;
-		LchInput((CP & T & LchOutput(true)), (CP & T & LchOutput(false)));
+		LchInput(((CPCHK == false && CP == true ? true : false) & T & LchOutput(true)), ((CPCHK == false && CP == true ? true : false) & T & LchOutput(false)));
+		CPCHK = cp;
 	}
 	bool TIO(bool t, bool cp, bool Mode = false) {
-		T = t;
-		CP = cp;
-		LchInput((CP & T & LchOutput(true)), (CP & T & LchOutput(false)));
+		TInput(t, cp);
 		return (LchOutput(Mode));
 	}
 	void PrintStat() {
 		cout << "============" << endl;
 		cout << "T: " << T << endl;
 		cout << "CP: " << CP << endl;
+		cout << "CPCHK: " << CPCHK << endl;
 		cout << "Q: " << LchOutput(false) << endl;
 		cout << "Q_: " << LchOutput(true) << endl;
 		cout << "============" << endl;
@@ -115,26 +128,32 @@ class DFF : public Latch {
 private:
 	bool D;
 	bool CP;
+	bool CPCHK;
 public:
 	DFF() {
 		D = false;
 		CP = false;
+		CPCHK = CP;
+	}
+	void ClockFall() {
+		CP = false;
+		CPCHK = CP;
 	}
 	void DInput(bool d, bool cp) {
 		D = d;
 		CP = cp;
-		LchInput((CP & D), (CP & (!D)));
+		LchInput(((CPCHK == false && CP == true ? true : false) & D), ((CPCHK == false && CP == true ? true : false) & (!D)));
+		CPCHK = cp;
 	}
 	bool DIO(bool d, bool cp, bool Mode = false) {
-		D = d;
-		CP = cp;
-		LchInput((CP & D), (CP & (!D)));
+		DInput(d, cp);
 		return (LchOutput(Mode));
 	}
 	void PrintStat() {
 		cout << "============" << endl;
 		cout << "D: " << D << endl;
 		cout << "CP: " << CP << endl;
+		cout << "CPCHK: " << CPCHK << endl;
 		cout << "Q: " << LchOutput(false) << endl;
 		cout << "Q_: " << LchOutput(true) << endl;
 		cout << "============" << endl;
