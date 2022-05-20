@@ -10,11 +10,12 @@ class Latch {
 private:
 	bool S, R;
 	bool Q, Q_;
+	bool PR, CLR;
 
 	void Compute() {
-		Q = !(R | Q_);
-		Q_ = !(S | Q);
-		Q = !(R | Q_);
+		Q = !(R | Q_ | !CLR);
+		Q_ = !(S | Q | !PR);
+		Q = !(R | Q_ | !CLR);
 	}
 public:
 	Latch() {
@@ -22,6 +23,8 @@ public:
 		R = false;
 		Q = false;
 		Q_ = !Q;
+		PR = true;
+		CLR = true;
 	}
 
 	void LchInput(bool set, bool reset) {
@@ -29,7 +32,6 @@ public:
 		R = reset;
 		Compute();
 	}
-
 	bool LchOutput(bool Mode = false) {	//0: Q, 1: Q_
 		return (Mode == false ? Q : Q_);
 	}
@@ -37,6 +39,7 @@ public:
 		LchInput(set, reset);
 		LchOutput(Mode);
 	}
+
 	void PrintStat() {
 		cout << "============" << endl;
 		cout << "S: " << S << endl;
@@ -45,7 +48,12 @@ public:
 		cout << "Q_: " << Q_ << endl;
 		cout << "============" << endl;
 	}
-
+	void Preset(bool input) {
+		PR = input;
+	}
+	void Clear(bool input) {
+		CLR = input;
+	}
 };
 
 class JKFF : public Latch {
